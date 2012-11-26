@@ -118,7 +118,8 @@ module.exports = function (grunt) {
 
     config.upload.forEach(function(upload) {
       // Expand list of files to upload.
-      var files = grunt.file.expandFiles(upload.src);
+      var files = grunt.file.expandFiles(upload.src),
+          destPath = grunt.template.process(upload.dest);
 
       files.forEach(function(file) {
         file = path.resolve(file);
@@ -128,8 +129,8 @@ module.exports = function (grunt) {
         // we know this is a single file transfer. Otherwise, we need to build
         // the destination.
         var dest = (files.length === 1 && file === upload.src) ?
-          upload.dest :
-          path.join(upload.dest, path.basename(file));
+          destPath :
+          path.join(destPath, path.basename(file));
 
         transfers.push(grunt.helper('s3.put', file, dest, upload));
       });
